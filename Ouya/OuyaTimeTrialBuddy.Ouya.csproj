@@ -44,6 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="..\Source\TimeTrialScreenManager.cs">
+      <Link>TimeTrialScreenManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Source\PurchaseScreen.cs">
+      <Link>PurchaseScreen.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
