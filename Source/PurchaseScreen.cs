@@ -62,7 +62,7 @@ namespace OuyaTimeTrialBuddy
 
 			//First check the receipts
 			TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
-			if (!myScreenManager.TrialMode)
+			if (!Guide.IsTrialMode)
 			{
 				//Why are we here?
 				myScreenManager.RemoveScreen(this);

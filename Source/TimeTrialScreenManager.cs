@@ -7,6 +7,7 @@ using Ouya.Console.Api;
 using Ouya.Csharp;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.GamerServices;
 
 /*
  * 
@@ -59,12 +60,6 @@ namespace OuyaTimeTrialBuddy
 		public OuyaFacade PurchaseFacade { get; private set; }
 
 		/// <summary>
-		/// Flag for whether or not this game is running in trial mode.
-		/// </summary>
-		/// <value><c>true</c> if trial mode; otherwise, <c>false</c>.</value>
-		public bool TrialMode { get; set; }
-
-		/// <summary>
 		/// Gets or sets the length of the trial mode, in seconds.
 		/// Defaults to 5 minutes
 		/// </summary>
@@ -89,7 +84,7 @@ namespace OuyaTimeTrialBuddy
 			base(game, strTitleFont, strMenuFont, strMessageBoxFont, strMenuChange, strMenuSelect)
 		{
 			//always start in trial mode
-			TrialMode = true;
+			Guide.IsTrialMode = true;
 			TrialLength = 300.0f;
 
 			//Get the list of purchasable items
@@ -166,7 +161,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestProducts.Dispose();
 					TaskRequestProducts = null;
 				}
-				else if (TrialMode)
+				else if (Guide.IsTrialMode)
 				{
 					if (TaskRequestProducts.IsCanceled)
 					{
@@ -194,7 +189,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestPurchase = null;
 					ClearPurchaseId();
 				}
-				else if (TrialMode)
+				else if (Guide.IsTrialMode)
 				{
 					if (TaskRequestPurchase.IsCanceled)
 					{
@@ -228,7 +223,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestReceipts.Dispose();
 					TaskRequestReceipts = null;
 				}
-				else if (TrialMode)
+				else if (Guide.IsTrialMode)
 				{
 					//If it is still trial mode, check if that thing has completed.
 					if (TaskRequestReceipts.IsCanceled)
@@ -257,7 +252,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestGamer.Dispose();
 					TaskRequestGamer = null;
 				}
-				else if (TrialMode)
+				else if (Guide.IsTrialMode)
 				{
 					//If it is still trial mode, check if that thing has completed.
 					if (TaskRequestGamer.IsCanceled)
@@ -324,7 +319,7 @@ namespace OuyaTimeTrialBuddy
 		private void AddPurchaseScreen()
 		{
 			//is trial mode out of time?
-			if (TrialMode && (0.0f >= m_TrialModeTimer.RemainingTime()))
+			if (Guide.IsTrialMode && (0.0f >= m_TrialModeTimer.RemainingTime()))
 			{
 				//is there already purchase screen in the stack?
 				foreach (GameScreen screen in Screens)
@@ -376,7 +371,7 @@ namespace OuyaTimeTrialBuddy
 			{
 				//ok, we got the purchasable item and the receipt for it, so trial mode is OVER
 				Debug.WriteLine("Trial mode is over!");
-				TrialMode = false;
+				Guide.IsTrialMode = false;
 			}
 		}
 
@@ -387,7 +382,7 @@ namespace OuyaTimeTrialBuddy
 		/// <param name="e">E.</param>
 		public void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
 		{
-			if (TrialMode)
+			if (Guide.IsTrialMode)
 			{
 				if (null != TaskRequestProducts &&
 					null == TaskRequestProducts.Exception &&
