@@ -50,6 +50,13 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		private string m_uniquePurchaseId = string.Empty;
 
+		/// <summary>
+		/// Whether or not we already checked all the receipts
+		/// </summary>
+		private bool ReceiptsChecked = false;
+		private bool GamerChecked = false;
+		private bool PurchasablesChecked = false;
+
 		#endregion //Member Variables
 
 		#region Properties
@@ -57,7 +64,7 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// The purchase facade.
 		/// </summary>
-		public OuyaFacade PurchaseFacade { get; private set; }
+		public OuyaFacade PurchaseFacade { get; set; }
 
 		/// <summary>
 		/// Gets or sets the length of the trial mode, in seconds.
@@ -87,6 +94,9 @@ namespace OuyaTimeTrialBuddy
 			Guide.IsTrialMode = true;
 			TrialLength = 300.0f;
 
+			//start the countdown timer
+			m_TrialModeTimer.Start(TrialLength);
+
 			//Get the list of purchasable items
 			this.PurchaseFacade = purchaseFacade;
 			TaskRequestProducts = PurchaseFacade.RequestProductListAsync(purchasables);
@@ -98,9 +108,6 @@ namespace OuyaTimeTrialBuddy
 		public override void Initialize()
 		{
 			base.Initialize();
-
-			//start the countdown timer
-			m_TrialModeTimer.Start(TrialLength);
 		}
 
 		/// <summary>
@@ -135,6 +142,12 @@ namespace OuyaTimeTrialBuddy
 		{
 			base.Update(gameTime);
 
+			//If it is't trial mode, don't do any of this other stuff
+			if (!Guide.IsTrialMode)
+			{
+				return;
+			}
+
 			//update the trial mode timer
 			m_TrialModeTimer.Update(gameTime);
 
@@ -152,7 +165,7 @@ namespace OuyaTimeTrialBuddy
 			}
 
 			//Check on that request products task...
-			if (null != TaskRequestProducts)
+			if ((null != TaskRequestProducts) && !PurchasablesChecked)
 			{
 				AggregateException exception = TaskRequestProducts.Exception;
 				if (null != exception)
@@ -166,6 +179,7 @@ namespace OuyaTimeTrialBuddy
 					if (TaskRequestProducts.IsCanceled)
 					{
 						Debug.WriteLine("Request Products has cancelled.");
+						PurchasablesChecked = true;
 					}
 					else if (TaskRequestProducts.IsCompleted)
 					{
@@ -174,6 +188,7 @@ namespace OuyaTimeTrialBuddy
 						{
 							CheckReceipt(TaskRequestProducts.Result.Count);
 						}
+						PurchasablesChecked = true;
 					}
 				}
 			}
@@ -194,6 +209,7 @@ namespace OuyaTimeTrialBuddy
 					if (TaskRequestPurchase.IsCanceled)
 					{
 						Debug.WriteLine("Request Purchase has cancelled.");
+						TaskRequestPurchase = null;
 						ClearPurchaseId(); //clear the purchase id
 					}
 					else if (TaskRequestPurchase.IsCompleted)
@@ -207,13 +223,14 @@ namespace OuyaTimeTrialBuddy
 						{
 							Debug.WriteLine("Request Purchase has completed with failure.");
 						}
+						TaskRequestPurchase = null;
 						ClearPurchaseId(); //clear the purchase id
 					}
 				}
 			}
 
 			//Check on our receipt task...
-			if (null != TaskRequestReceipts)
+			if ((null != TaskRequestReceipts) && !ReceiptsChecked)
 			{
 				//Did it blow up?  Clear it out to prevent killing the app.
 				AggregateException exception = TaskRequestReceipts.Exception;
@@ -229,6 +246,7 @@ namespace OuyaTimeTrialBuddy
 					if (TaskRequestReceipts.IsCanceled)
 					{
 						Debug.WriteLine("Request Receipts has cancelled.");
+						ReceiptsChecked = true;
 					}
 					else if (TaskRequestReceipts.IsCompleted)
 					{
@@ -238,12 +256,13 @@ namespace OuyaTimeTrialBuddy
 						{
 							CheckReceipt(TaskRequestReceipts.Result.Count);
 						}
+						ReceiptsChecked = true;
 					}
 				}
 			}
 
 			// touch exception property to avoid killing app
-			if (null != TaskRequestGamer)
+			if ((null != TaskRequestGamer) && !GamerChecked)
 			{
 				AggregateException exception = TaskRequestGamer.Exception;
 				if (null != exception)
@@ -258,15 +277,20 @@ namespace OuyaTimeTrialBuddy
 					if (TaskRequestGamer.IsCanceled)
 					{
 						Debug.WriteLine("Request Gamer UUID has cancelled.");
+						GamerChecked = true;
 					}
 					else if (TaskRequestGamer.IsCompleted)
 					{
 						//ok, the gamer task cam back with an answer...
 						Debug.WriteLine("Request Gamer UUID has completed.");
-						if (null != TaskRequestReceipts.Result)
-						{
-							CheckReceipt(TaskRequestReceipts.Result.Count);
-						}
+//						if (null != TaskRequestReceipts &&
+//						    null != TaskRequestReceipts.Result)
+//						{
+//							Debug.WriteLine("Trying to CheckReceipt...");
+//							CheckReceipt(TaskRequestReceipts.Result.Count);
+//						}
+
+						GamerChecked = true;
 					}
 				}
 			}
@@ -342,36 +366,60 @@ namespace OuyaTimeTrialBuddy
 		/// <param name="receiptIndex">Receipt index.</param>
 		public void CheckReceipt(int itemIndex)
 		{
+			//If we've already done this check, don't keep doing it
+			if (ReceiptsChecked)
+			{
+				return;
+			}
+
+			Debug.WriteLine("Checking receipt...");
+
 			//Get the text from the receipt
 			string strReceiptText = null;
-			if (null != TaskRequestReceipts &&
-			    null == TaskRequestReceipts.Exception &&
+			if ((null != TaskRequestReceipts) &&
+			    (null == TaskRequestReceipts.Exception) &&
 			    !TaskRequestReceipts.IsCanceled &&
-			    TaskRequestReceipts.IsCompleted &&
-			    null != TaskRequestReceipts.Result)
+			    TaskRequestReceipts.IsCompleted)
 			{
-				Receipt receipt = TaskRequestReceipts.Result[itemIndex];
-				strReceiptText = receipt.Identifier;
+				if  ((null != TaskRequestReceipts.Result) &&
+				     (TaskRequestReceipts.Result.Count > 0))
+				{
+					Receipt receipt = TaskRequestReceipts.Result[itemIndex];
+					strReceiptText = receipt.Identifier;
+					Debug.WriteLine(string.Format("The receipt item is {0}", strReceiptText));
+				}
 			}
+
+			Debug.WriteLine("Checking purchasable...");
 
 			//Get teh text from the purchasable item
 			string strPurchasableItem = null;
 			if (null != TaskRequestProducts &&
 			    null == TaskRequestProducts.Exception &&
 			    !TaskRequestProducts.IsCanceled &&
-			    TaskRequestProducts.IsCompleted)
+			    TaskRequestProducts.IsCompleted &&
+			    null != TaskRequestProducts.Result &&
+			    TaskRequestProducts.Result.Count > 0)
 			{
 				Product product = TaskRequestProducts.Result[itemIndex];
 				strPurchasableItem = product.Identifier;
+
+				Debug.WriteLine(string.Format("The purchasable item is {0}", strPurchasableItem));
 			}
 
 			if (!string.IsNullOrEmpty(strReceiptText) &&
-				!string.IsNullOrEmpty(strPurchasableItem) &&
-				strReceiptText == strPurchasableItem)
+				!string.IsNullOrEmpty(strPurchasableItem))
 			{
-				//ok, we got the purchasable item and the receipt for it, so trial mode is OVER
-				Debug.WriteLine("Trial mode is over!");
-				Guide.IsTrialMode = false;
+				if (strReceiptText == strPurchasableItem)
+				{
+					//ok, we got the purchasable item and the receipt for it, so trial mode is OVER
+					Debug.WriteLine("Trial mode is over!");
+					Guide.IsTrialMode = false;
+				}
+				else
+				{
+					Debug.WriteLine("Checked receipts, and player has not purchased.");
+				}
 			}
 		}
 

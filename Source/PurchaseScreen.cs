@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.GamerServices;
 using GameTimer;
 using MenuBuddy;
+using System.Diagnostics;
 
 namespace OuyaTimeTrialBuddy
 {
@@ -36,6 +37,7 @@ namespace OuyaTimeTrialBuddy
 		{
 			Cancelled += MarketplaceDenied;
 			TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
+			Debug.Assert(null != myScreenManager);
 			Accepted += myScreenManager.PurchaseFullVersion;
 
 			TransitionOnTime = TimeSpan.FromSeconds(1.0f);
