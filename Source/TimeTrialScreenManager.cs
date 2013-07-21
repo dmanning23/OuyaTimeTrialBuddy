@@ -53,7 +53,7 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// Whether or not we already checked all the receipts
 		/// </summary>
-		private bool ReceiptsChecked = false;
+		public bool ReceiptsChecked { get; private set; }
 		private bool GamerChecked = false;
 		private bool PurchasablesChecked = false;
 
@@ -90,6 +90,8 @@ namespace OuyaTimeTrialBuddy
 		                     OuyaFacade purchaseFacade) : 
 			base(game, strTitleFont, strMenuFont, strMessageBoxFont, strMenuChange, strMenuSelect)
 		{
+			ReceiptsChecked = false;
+
 			//always start in trial mode
 			Guide.IsTrialMode = true;
 			TrialLength = 270.0f;
@@ -152,7 +154,7 @@ namespace OuyaTimeTrialBuddy
 			m_TrialModeTimer.Update(gameTime);
 
 			//if 3 seconds have passed, query the player data to see if they've bought the game or not
-			if ((m_TrialModeTimer.PreviousTime() <= 3.0f) && (m_TrialModeTimer.CurrentTime > 3.0f))
+			if ((m_TrialModeTimer.PreviousTime() <= 2.0f) && (m_TrialModeTimer.CurrentTime > 2.0f))
 			{
 				//get the player uuid
 				Debug.WriteLine("Requesting gamer uuid...");
@@ -186,7 +188,8 @@ namespace OuyaTimeTrialBuddy
 						Debug.WriteLine("Request Products has completed with results.");
 						if (null != TaskRequestProducts.Result)
 						{
-							CheckReceipt(TaskRequestProducts.Result.Count);
+							//check the last item in the list
+							CheckReceipt(TaskRequestProducts.Result.Count - 1);
 						}
 						PurchasablesChecked = true;
 					}
@@ -218,6 +221,7 @@ namespace OuyaTimeTrialBuddy
 						{
 							//TODO: does this mean they were able to buy it?
 							Debug.WriteLine("Request Purchase has completed succesfully.");
+							Guide.IsTrialMode = false;
 						}
 						else
 						{
@@ -254,7 +258,8 @@ namespace OuyaTimeTrialBuddy
 						Debug.WriteLine("Request Receipts has completed.");
 						if (null != TaskRequestReceipts.Result)
 						{
-							CheckReceipt(TaskRequestReceipts.Result.Count);
+							//check the last item in the list
+							CheckReceipt(TaskRequestReceipts.Result.Count - 1);
 						}
 						ReceiptsChecked = true;
 					}
@@ -364,7 +369,7 @@ namespace OuyaTimeTrialBuddy
 		/// Got a message back from Ouya... check the receipt, has the player bought the game already
 		/// </summary>
 		/// <param name="receiptIndex">Receipt index.</param>
-		public void CheckReceipt(int itemIndex)
+		private void CheckReceipt(int itemIndex)
 		{
 			//If we've already done this check, don't keep doing it
 			if (ReceiptsChecked)
@@ -372,7 +377,7 @@ namespace OuyaTimeTrialBuddy
 				return;
 			}
 
-			Debug.WriteLine("Checking receipt...");
+			Debug.WriteLine(string.Format("Checking receipt {0}...", itemIndex));
 
 			//Get the text from the receipt
 			string strReceiptText = null;
@@ -381,6 +386,7 @@ namespace OuyaTimeTrialBuddy
 			    !TaskRequestReceipts.IsCanceled &&
 			    TaskRequestReceipts.IsCompleted)
 			{
+				Debug.WriteLine("Found receipts...");
 				if  ((null != TaskRequestReceipts.Result) &&
 				     (TaskRequestReceipts.Result.Count > itemIndex))
 				{
@@ -388,9 +394,17 @@ namespace OuyaTimeTrialBuddy
 					strReceiptText = receipt.Identifier;
 					Debug.WriteLine(string.Format("The receipt item is {0}", strReceiptText));
 				}
+				else if (null != TaskRequestReceipts.Result)
+				{
+					Debug.WriteLine(string.Format("Found receipts {0}.", TaskRequestReceipts.Result.Count));
+				}
+				else
+				{
+					Debug.WriteLine("No result on the receipts list?");
+				}
 			}
 
-			Debug.WriteLine("Checking purchasable...");
+			Debug.WriteLine(string.Format("Checking purchasable {0}...", itemIndex));
 
 			//Get teh text from the purchasable item
 			string strPurchasableItem = null;
@@ -399,13 +413,22 @@ namespace OuyaTimeTrialBuddy
 			    !TaskRequestProducts.IsCanceled &&
 			    TaskRequestProducts.IsCompleted)
 			{
+				Debug.WriteLine("Found products...");
 				if (null != TaskRequestProducts.Result &&
-			    TaskRequestProducts.Result.Count > itemIndex)
+					TaskRequestProducts.Result.Count > itemIndex)
 				{
 					Product product = TaskRequestProducts.Result[itemIndex];
 					strPurchasableItem = product.Identifier;
 
 					Debug.WriteLine(string.Format("The purchasable item is {0}", strPurchasableItem));
+				}
+				else if (null != TaskRequestProducts.Result)
+				{
+					Debug.WriteLine(string.Format("Found products {0}.", TaskRequestProducts.Result.Count));
+				}
+				else
+				{
+					Debug.WriteLine("No result on the product list?");
 				}
 			}
 
@@ -430,7 +453,7 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		/// <param name="sender">Sender.</param>
 		/// <param name="e">E.</param>
-		public void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
+		public virtual void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
 		{
 			if (Guide.IsTrialMode)
 			{
