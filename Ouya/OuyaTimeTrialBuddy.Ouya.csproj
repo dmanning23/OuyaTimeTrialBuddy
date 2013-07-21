@@ -87,5 +87,9 @@
       <Project>{565129E0-4EE5-4F6F-B403-C3484C9740BE}</Project>
       <Name>Lidgren.Network.Android</Name>
     </ProjectReference>
+    <ProjectReference Include="..\externals\FontBuddy\Ouya\FontBuddyLib.Ouya.csproj">
+      <Project>{782A28A3-66E3-40B6-8651-8F159AF19BA6}</Project>
+      <Name>FontBuddyLib.Ouya</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
