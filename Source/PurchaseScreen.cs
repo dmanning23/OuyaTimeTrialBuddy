@@ -13,7 +13,7 @@ namespace OuyaTimeTrialBuddy
 	/// <summary>
 	/// This is a special screen that forces the player to buy or exit the game
 	/// </summary>
-	class PurchaseScreen : MessageBoxScreen
+	public class PurchaseScreen : MessageBoxScreen
 	{
 		#region Members
 
