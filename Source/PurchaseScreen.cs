@@ -36,9 +36,7 @@ namespace OuyaTimeTrialBuddy
 		public PurchaseScreen() : base(message, false)
 		{
 			Cancelled += MarketplaceDenied;
-			TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
-			Debug.Assert(null != myScreenManager);
-			Accepted += myScreenManager.PurchaseFullVersion;
+			Accepted += PurchaseFullVersion;
 
 			TransitionOnTime = TimeSpan.FromSeconds(1.0f);
 
@@ -76,6 +74,15 @@ namespace OuyaTimeTrialBuddy
 		#endregion //Methods
 
 		#region Handle Input
+
+		/// <summary>
+		/// Event handler for when the Purchase menu entry is selected.
+		/// </summary>
+		private void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
+		{
+			TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
+			myScreenManager.PurchaseFullVersion(sender, e);
+		}
 
 		/// <summary>
 		/// Player don't want to buy the game, dump their ass back to the dashboard

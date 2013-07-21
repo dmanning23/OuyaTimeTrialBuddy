@@ -92,7 +92,7 @@ namespace OuyaTimeTrialBuddy
 		{
 			//always start in trial mode
 			Guide.IsTrialMode = true;
-			TrialLength = 300.0f;
+			TrialLength = 10.0f;
 
 			//start the countdown timer
 			m_TrialModeTimer.Start(TrialLength);
@@ -382,7 +382,7 @@ namespace OuyaTimeTrialBuddy
 			    TaskRequestReceipts.IsCompleted)
 			{
 				if  ((null != TaskRequestReceipts.Result) &&
-				     (TaskRequestReceipts.Result.Count > 0))
+				     (TaskRequestReceipts.Result.Count > itemIndex))
 				{
 					Receipt receipt = TaskRequestReceipts.Result[itemIndex];
 					strReceiptText = receipt.Identifier;
@@ -397,14 +397,16 @@ namespace OuyaTimeTrialBuddy
 			if (null != TaskRequestProducts &&
 			    null == TaskRequestProducts.Exception &&
 			    !TaskRequestProducts.IsCanceled &&
-			    TaskRequestProducts.IsCompleted &&
-			    null != TaskRequestProducts.Result &&
-			    TaskRequestProducts.Result.Count > 0)
+			    TaskRequestProducts.IsCompleted)
 			{
-				Product product = TaskRequestProducts.Result[itemIndex];
-				strPurchasableItem = product.Identifier;
+				if (null != TaskRequestProducts.Result &&
+			    TaskRequestProducts.Result.Count > itemIndex)
+				{
+					Product product = TaskRequestProducts.Result[itemIndex];
+					strPurchasableItem = product.Identifier;
 
-				Debug.WriteLine(string.Format("The purchasable item is {0}", strPurchasableItem));
+					Debug.WriteLine(string.Format("The purchasable item is {0}", strPurchasableItem));
+				}
 			}
 
 			if (!string.IsNullOrEmpty(strReceiptText) &&
