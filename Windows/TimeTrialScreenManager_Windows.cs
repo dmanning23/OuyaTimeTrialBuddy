@@ -43,7 +43,7 @@ namespace OuyaTimeTrialBuddy
 		{
 			//always start in trial mode
 			Guide.IsTrialMode = true;
-			TrialLength = 300.0f;
+			TrialLength = 270.0f;
 
 			//start the countdown timer
 			m_TrialModeTimer.Start(TrialLength);
@@ -172,6 +172,7 @@ namespace OuyaTimeTrialBuddy
 			if (Guide.IsTrialMode)
 			{
 				Console.WriteLine("Full Version Purchased!");
+				Guide.IsTrialMode = false;
 			}
 		}
 

@@ -38,19 +38,15 @@ namespace OuyaTimeTrialBuddy
 			Cancelled += MarketplaceDenied;
 			Accepted += PurchaseFullVersion;
 
-			TransitionOnTime = TimeSpan.FromSeconds(1.0f);
+			TransitionOnTime = TimeSpan.FromSeconds(1.5f);
 
 			//make the player stare at this screen for 2 seconds before they can quit
-			_timer.Start(1.0f);
+			_timer.Start(1.5f);
 		}
 
 		#endregion //Initialization
 
 		#region Methods
-
-		public override void LoadContent()
-		{
-		}
 
 		/// <summary>
 		/// Updates the menu.
@@ -80,8 +76,11 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		private void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
 		{
-			TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
-			myScreenManager.PurchaseFullVersion(sender, e);
+			if (0.0f >= _timer.RemainingTime())
+			{
+				TimeTrialScreenManager myScreenManager = ScreenManager as TimeTrialScreenManager;
+				myScreenManager.PurchaseFullVersion(sender, e);
+			}
 		}
 
 		/// <summary>
@@ -91,7 +90,10 @@ namespace OuyaTimeTrialBuddy
 		/// <param name="e">E.</param>
 		private void MarketplaceDenied(object sender, PlayerIndexEventArgs e)
 		{
-			ScreenManager.Game.Exit();
+			if (0.0f >= _timer.RemainingTime())
+			{
+				ScreenManager.Game.Exit();
+			}
 		}
 
 		#endregion //Handle Input
