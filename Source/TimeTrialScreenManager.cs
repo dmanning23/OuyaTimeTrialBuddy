@@ -94,7 +94,7 @@ namespace OuyaTimeTrialBuddy
 
 			//always start in trial mode
 			Guide.IsTrialMode = true;
-			TrialLength = 270.0f;
+			TrialLength = 210.0f;
 
 			//start the countdown timer
 			m_TrialModeTimer.Start(TrialLength);
@@ -373,6 +373,12 @@ namespace OuyaTimeTrialBuddy
 		{
 			//If we've already done this check, don't keep doing it
 			if (ReceiptsChecked)
+			{
+				return;
+			}
+
+			//if the index is -1, it means there were no receipts or purchasable items :P
+			if (0 > itemIndex)
 			{
 				return;
 			}
