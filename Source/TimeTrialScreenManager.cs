@@ -219,9 +219,9 @@ namespace OuyaTimeTrialBuddy
 					{
 						if (TaskRequestPurchase.Result)
 						{
-							//TODO: does this mean they were able to buy it?
+							//this means they were able to buy it
 							Debug.WriteLine("Request Purchase has completed succesfully.");
-							Guide.IsTrialMode = false;
+							SetTrialMode(false);
 						}
 						else
 						{
@@ -445,11 +445,12 @@ namespace OuyaTimeTrialBuddy
 				{
 					//ok, we got the purchasable item and the receipt for it, so trial mode is OVER
 					Debug.WriteLine("Trial mode is over!");
-					Guide.IsTrialMode = false;
+					SetTrialMode(false);
 				}
 				else
 				{
 					Debug.WriteLine("Checked receipts, and player has not purchased.");
+					SetTrialMode(true);
 				}
 			}
 		}
@@ -476,6 +477,19 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestPurchase = PurchaseFacade.RequestPurchaseAsync(product, m_uniquePurchaseId);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Sets the trial mode flag.
+		/// this method gets called when:
+		/// 	the player purchases the game
+		/// 	we have verified that they already purchased 
+		/// 	the ouya service gets back to us that they have not purchased
+		/// </summary>
+		/// <param name="IsTrialMode">If set to <c>true</c> is trial mode.</param>
+		public virtual void SetTrialMode(bool bIsTrialMode)
+		{
+			Guide.IsTrialMode = bIsTrialMode;
 		}
 
 		#endregion //Public Methods
