@@ -369,7 +369,68 @@ namespace OuyaTimeTrialBuddy
 		/// Got a message back from Ouya... check the receipt, has the player bought the game already
 		/// </summary>
 		/// <param name="receiptIndex">Receipt index.</param>
-		private void CheckReceipt(int itemIndex)
+		protected virtual void CheckReceipt(int itemIndex)
+		{
+			//If we've already done this check, don't keep doing it
+			if (ReceiptsChecked)
+			{
+				return;
+			}
+
+			//if the index is -1, it means there were no receipts or purchasable items :P
+			if (0 > itemIndex)
+			{
+				return;
+			}
+
+			Debug.WriteLine(string.Format("Checking receipt {0}...", itemIndex));
+
+			//Get the text from the receipt
+			if ((null != TaskRequestReceipts) &&
+			    (null == TaskRequestReceipts.Exception) &&
+			    !TaskRequestReceipts.IsCanceled &&
+			    TaskRequestReceipts.IsCompleted)
+			{
+				Debug.WriteLine("Found receipts...");
+				if  ((null != TaskRequestReceipts.Result) &&
+				     (TaskRequestReceipts.Result.Count > itemIndex))
+				{
+					bool bFound = false;
+					foreach (Receipt receipt in TaskRequestReceipts.Result)
+					{
+						Debug.WriteLine(string.Format("The receipt item is {0}", receipt.Identifier));
+						if ("Opposites_FullGame" == receipt.Identifier)
+						{
+							bFound = true;
+							break;
+						}
+					}
+
+					if (bFound)
+					{
+						//ok, we got the purchasable item and the receipt for it, so trial mode is OVER
+						Debug.WriteLine("Trial mode is over!");
+						SetTrialMode(false);
+					}
+					else
+					{
+						Debug.WriteLine("Checked receipts, and player has not purchased.");
+						SetTrialMode(true);
+					}
+				}
+				else if (null != TaskRequestReceipts.Result)
+				{
+					Debug.WriteLine(string.Format("Found receipts {0}.", TaskRequestReceipts.Result.Count));
+				}
+				else
+				{
+					Debug.WriteLine("No result on the receipts list?");
+				}
+			}
+		}
+
+		/*
+		 * protected virtual void CheckReceipt(int itemIndex)
 		{
 			//If we've already done this check, don't keep doing it
 			if (ReceiptsChecked)
@@ -454,6 +515,7 @@ namespace OuyaTimeTrialBuddy
 				}
 			}
 		}
+		 * */
 
 		/// <summary>
 		/// User selected an item to try and buy the full game
