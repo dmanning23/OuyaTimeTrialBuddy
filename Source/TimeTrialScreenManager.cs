@@ -145,7 +145,7 @@ namespace OuyaTimeTrialBuddy
 			base.Update(gameTime);
 
 			//If it is't trial mode, don't do any of this other stuff
-			if (!Guide.IsTrialMode)
+			if (ReceiptsChecked && !Guide.IsTrialMode)
 			{
 				return;
 			}
@@ -176,7 +176,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestProducts.Dispose();
 					TaskRequestProducts = null;
 				}
-				else if (Guide.IsTrialMode)
+				else
 				{
 					if (TaskRequestProducts.IsCanceled)
 					{
@@ -189,7 +189,7 @@ namespace OuyaTimeTrialBuddy
 						if (null != TaskRequestProducts.Result)
 						{
 							//check the last item in the list
-							CheckReceipt(TaskRequestProducts.Result.Count - 1);
+							CheckReceipt();
 						}
 						PurchasablesChecked = true;
 					}
@@ -207,7 +207,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestPurchase = null;
 					ClearPurchaseId();
 				}
-				else if (Guide.IsTrialMode)
+				else
 				{
 					if (TaskRequestPurchase.IsCanceled)
 					{
@@ -244,7 +244,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestReceipts.Dispose();
 					TaskRequestReceipts = null;
 				}
-				else if (Guide.IsTrialMode)
+				else
 				{
 					//If it is still trial mode, check if that thing has completed.
 					if (TaskRequestReceipts.IsCanceled)
@@ -259,7 +259,7 @@ namespace OuyaTimeTrialBuddy
 						if (null != TaskRequestReceipts.Result)
 						{
 							//check the last item in the list
-							CheckReceipt(TaskRequestReceipts.Result.Count - 1);
+							CheckReceipt();
 						}
 						ReceiptsChecked = true;
 					}
@@ -276,7 +276,7 @@ namespace OuyaTimeTrialBuddy
 					TaskRequestGamer.Dispose();
 					TaskRequestGamer = null;
 				}
-				else if (Guide.IsTrialMode)
+				else
 				{
 					//If it is still trial mode, check if that thing has completed.
 					if (TaskRequestGamer.IsCanceled)
@@ -369,7 +369,7 @@ namespace OuyaTimeTrialBuddy
 		/// Got a message back from Ouya... check the receipt, has the player bought the game already
 		/// </summary>
 		/// <param name="receiptIndex">Receipt index.</param>
-		protected virtual void CheckReceipt(int itemIndex)
+		protected virtual void CheckReceipt()
 		{
 			//If we've already done this check, don't keep doing it
 			if (ReceiptsChecked)
@@ -377,13 +377,7 @@ namespace OuyaTimeTrialBuddy
 				return;
 			}
 
-			//if the index is -1, it means there were no receipts or purchasable items :P
-			if (0 > itemIndex)
-			{
-				return;
-			}
-
-			Debug.WriteLine(string.Format("Checking receipt {0}...", itemIndex));
+			Debug.WriteLine("Checking receipts...");
 
 			//Get the text from the receipt
 			if ((null != TaskRequestReceipts) &&
@@ -392,8 +386,7 @@ namespace OuyaTimeTrialBuddy
 			    TaskRequestReceipts.IsCompleted)
 			{
 				Debug.WriteLine("Found receipts...");
-				if  ((null != TaskRequestReceipts.Result) &&
-				     (TaskRequestReceipts.Result.Count > itemIndex))
+				if  (null != TaskRequestReceipts.Result)
 				{
 					bool bFound = false;
 					foreach (Receipt receipt in TaskRequestReceipts.Result)
