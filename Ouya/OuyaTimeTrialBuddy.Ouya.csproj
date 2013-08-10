@@ -91,5 +91,9 @@
       <Project>{3BFACC81-6B4D-462B-91E2-09349A3619AD}</Project>
       <Name>ResolutionBuddy.Ouya</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\OuyaPurchaseHelper\Ouya\OuyaPurchaseHelper.Ouya.csproj">
+      <Project>{836AA43A-F913-4B1A-A2CE-4B21795627C1}</Project>
+      <Name>OuyaPurchaseHelper.Ouya</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
