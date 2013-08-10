@@ -167,13 +167,22 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		/// <param name="sender">Sender.</param>
 		/// <param name="e">E.</param>
-		public void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
+		public virtual void PurchaseFullVersion(object sender, PlayerIndexEventArgs e)
 		{
 			if (Guide.IsTrialMode)
 			{
 				Console.WriteLine("Full Version Purchased!");
 				Guide.IsTrialMode = false;
 			}
+		}
+
+		/// <summary>
+		/// Sets the trial mode flag.
+		/// </summary>
+		/// <param name="IsTrialMode">If set to <c>true</c> is trial mode.</param>
+		public virtual void SetTrialMode(bool bIsTrialMode)
+		{
+			Guide.IsTrialMode = bIsTrialMode;
 		}
 
 		#endregion //Public Methods
