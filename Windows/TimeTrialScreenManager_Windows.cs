@@ -41,12 +41,16 @@ namespace OuyaTimeTrialBuddy
 		                              string strMenuSelect) : 
 			base(game, strTitleFont, strMenuFont, strMessageBoxFont, strMenuChange, strMenuSelect)
 		{
+#if OUYA
 			//always start in trial mode
 			Guide.IsTrialMode = true;
 			TrialLength = 270.0f;
 
 			//start the countdown timer
 			m_TrialModeTimer.Start(TrialLength);
+#else
+			Guide.IsTrialMode = false;
+#endif
 		}
 
 		/// <summary>
@@ -182,7 +186,8 @@ namespace OuyaTimeTrialBuddy
 		/// <param name="IsTrialMode">If set to <c>true</c> is trial mode.</param>
 		public virtual void SetTrialMode(bool bIsTrialMode)
 		{
-			Guide.IsTrialMode = bIsTrialMode;
+			//no trial mode in windows
+			Guide.IsTrialMode = false;
 		}
 
 		#endregion //Public Methods
