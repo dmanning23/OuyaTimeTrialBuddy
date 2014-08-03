@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic; 
 using Ouya.Console.Api;
-using Ouya.Csharp;
+using Ouya.Console;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.GamerServices;
+using TrialModeBuddy;
 using OuyaPurchaseHelper;
 
 /*
