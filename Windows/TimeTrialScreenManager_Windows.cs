@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic; 
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.GamerServices;
+using TrialModeBuddy;
 
 namespace OuyaTimeTrialBuddy
 {
@@ -45,9 +45,6 @@ namespace OuyaTimeTrialBuddy
 			//always start in trial mode
 			Guide.IsTrialMode = true;
 			TrialLength = 270.0f;
-
-			//start the countdown timer
-			m_TrialModeTimer.Start(TrialLength);
 #else
 			Guide.IsTrialMode = false;
 #endif
@@ -58,6 +55,11 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		public override void Initialize()
 		{
+#if OUYA
+			//start the countdown timer
+			m_TrialModeTimer.Start(TrialLength);
+#endif
+
 			base.Initialize();
 		}
 
