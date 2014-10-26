@@ -1,14 +1,10 @@
-using MenuBuddy;
 using GameTimer;
+using MenuBuddy;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic; 
 using Ouya.Console.Api;
-using Ouya.Console;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using TrialModeBuddy;
 using OuyaPurchaseHelper;
+using System.Collections.Generic;
+using TrialModeBuddy;
 
 /*
  * 

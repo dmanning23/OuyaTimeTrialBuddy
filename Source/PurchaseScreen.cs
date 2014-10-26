@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using TrialModeBuddy;
 using GameTimer;
 using MenuBuddy;
-using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using System;
+using TrialModeBuddy;
 
 namespace OuyaTimeTrialBuddy
 {
