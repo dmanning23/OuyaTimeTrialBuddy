@@ -67,10 +67,10 @@ namespace OuyaTimeTrialBuddy
 		                     OuyaFacade purchaseFacade) : 
 			base(game, strTitleFont, strMenuFont, strMessageBoxFont, strMenuChange, strMenuSelect)
 		{
-			buddy = new OuyaPurchaseBuddy(game, purchasables, purchaseFacade, "Opposites_FullGame");
+			buddy = new OuyaPurchaseBuddy(game, purchasables, purchaseFacade, "RoboJets_FullGame");
 
 			//start the countdown timer
-			TrialLength = 210.0f;
+			TrialLength = 150.0f;
 			m_TrialModeTimer.Start(TrialLength);
 		}
 

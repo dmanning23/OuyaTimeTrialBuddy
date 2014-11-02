@@ -18,9 +18,8 @@ namespace OuyaTimeTrialBuddy
 		/// </summary>
 		private CountdownTimer _timer = new CountdownTimer();
 
-		const string message = "Thank you for trying the trial mode of Opposites\n" +
-				"Would you like to buy the full version and continue playing?\n\n" +
-				"\nO button: Buy Game\nA button: Exit Game";
+		const string message = "Thank you for trying the trial mode of RoboJets\n" +
+				"Would you like to buy the full version and continue playing?";
 
 		#endregion //Members
 
