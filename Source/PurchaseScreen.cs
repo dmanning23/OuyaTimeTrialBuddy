@@ -32,6 +32,7 @@ namespace OuyaTimeTrialBuddy
 		{
 			Cancelled += MarketplaceDenied;
 			Accepted += PurchaseFullVersion;
+			InflateMessageBox = false;
 
 			TransitionOnTime = TimeSpan.FromSeconds(1.5f);
 
