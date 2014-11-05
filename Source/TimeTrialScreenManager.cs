@@ -70,7 +70,7 @@ namespace OuyaTimeTrialBuddy
 			buddy = new OuyaPurchaseBuddy(game, purchasables, purchaseFacade, "RoboJets_FullGame");
 
 			//start the countdown timer
-			TrialLength = 120.0f;
+			TrialLength = 90.0f;
 			m_TrialModeTimer.Start(TrialLength);
 		}
 
