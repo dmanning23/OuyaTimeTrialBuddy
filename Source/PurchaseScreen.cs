@@ -32,9 +32,6 @@ namespace OuyaTimeTrialBuddy
 		{
 			Cancelled += MarketplaceDenied;
 			Accepted += PurchaseFullVersion;
-			InflateMessageBox = false;
-
-			TransitionOnTime = TimeSpan.FromSeconds(1.5f);
 
 			//make the player stare at this screen for 2 seconds before they can quit
 			_timer.Start(1.5f);

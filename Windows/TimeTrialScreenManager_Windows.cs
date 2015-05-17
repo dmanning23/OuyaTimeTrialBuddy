@@ -33,13 +33,8 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// Constructs a new screen manager component.
 		/// </summary>
-		public TimeTrialScreenManager(Game game, 
-		                              string strTitleFont, 
-		                              string strMenuFont, 
-		                              string strMessageBoxFont,
-		                              string strMenuChange,
-		                              string strMenuSelect) : 
-			base(game, strTitleFont, strMenuFont, strMessageBoxFont, strMenuChange, strMenuSelect)
+		public TimeTrialScreenManager(Game game, ScreenStackDelegate mainMenuStack) :
+			base(game, mainMenuStack)
 		{
 #if OUYA
 			//always start in trial mode
@@ -61,26 +56,6 @@ namespace OuyaTimeTrialBuddy
 #endif
 
 			base.Initialize();
-		}
-
-		/// <summary>
-		/// Load your graphics content.
-		/// </summary>
-		protected override void LoadContent()
-		{
-			base.LoadContent();
-		}
-
-		/// <summary>
-		/// Unload your graphics content.
-		/// </summary>
-		protected override void UnloadContent()
-		{
-			base.UnloadContent();
-		}
-
-		void ClearPurchaseId()
-		{
 		}
 
 		#endregion //Initialization
@@ -107,14 +82,6 @@ namespace OuyaTimeTrialBuddy
 			AddPurchaseScreen();
 		}
 
-		/// <summary>
-		/// Tells each screen to draw itself.
-		/// </summary>
-		public override void Draw(GameTime gameTime)
-		{
-			base.Draw(gameTime);
-		}
-
 		#endregion //Update and Draw
 
 		#region Public Methods
@@ -122,7 +89,7 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// Adds a new screen to the screen manager.
 		/// </summary>
-		public override void AddScreen(GameScreen screen, PlayerIndex? controllingPlayer)
+		public override void AddScreen(IScreen screen, PlayerIndex? controllingPlayer)
 		{
 			base.AddScreen(screen, controllingPlayer);
 
@@ -136,7 +103,7 @@ namespace OuyaTimeTrialBuddy
 		/// the screen can gradually transition off rather than just being
 		/// instantly removed.
 		/// </summary>
-		public override void RemoveScreen(GameScreen screen)
+		public override void RemoveScreen(IScreen screen)
 		{
 			base.RemoveScreen(screen);
 
@@ -154,7 +121,7 @@ namespace OuyaTimeTrialBuddy
 			if (Guide.IsTrialMode && (0.0f >= m_TrialModeTimer.RemainingTime()))
 			{
 				//is there already purchase screen in the stack?
-				foreach (GameScreen screen in Screens)
+				foreach (var screen in Screens)
 				{
 					if (screen is PurchaseScreen)
 					{
@@ -185,8 +152,8 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// Sets the trial mode flag.
 		/// </summary>
-		/// <param name="IsTrialMode">If set to <c>true</c> is trial mode.</param>
-		public virtual void SetTrialMode(bool bIsTrialMode)
+		/// <param name="trialMode">If set to <c>true</c> is trial mode.</param>
+		public virtual void SetTrialMode(bool trialMode)
 		{
 			//no trial mode in windows
 			Guide.IsTrialMode = false;

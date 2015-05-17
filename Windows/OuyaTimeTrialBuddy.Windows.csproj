@@ -84,10 +84,6 @@
       <Project>{e83f9eaa-eb6b-4801-8bef-c602d34ebfd3}</Project>
       <Name>MenuBuddy.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TrialModeBuddy\Windows\TrialModeBuddy.Windows.csproj">
-      <Project>{290f9d5e-003d-4041-be3a-bacf8d47decf}</Project>
-      <Name>TrialModeBuddy.Windows</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
