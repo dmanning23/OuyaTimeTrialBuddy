@@ -119,10 +119,7 @@ namespace OuyaTimeTrialBuddy
 
 		#region Public Methods
 
-		/// <summary>
-		/// Adds a new screen to the screen manager.
-		/// </summary>
-		public override void AddScreen(GameScreen screen, PlayerIndex? controllingPlayer)
+		public override void AddScreen(IScreen screen, PlayerIndex? controllingPlayer = null)
 		{
 			base.AddScreen(screen, controllingPlayer);
 
@@ -130,13 +127,7 @@ namespace OuyaTimeTrialBuddy
 			AddPurchaseScreen();
 		}
 
-		/// <summary>
-		/// Removes a screen from the screen manager. You should normally
-		/// use GameScreen.ExitScreen instead of calling this directly, so
-		/// the screen can gradually transition off rather than just being
-		/// instantly removed.
-		/// </summary>
-		public override void RemoveScreen(GameScreen screen)
+		public override void RemoveScreen(IScreen screen)
 		{
 			base.RemoveScreen(screen);
 
@@ -154,7 +145,7 @@ namespace OuyaTimeTrialBuddy
 			if (Guide.IsTrialMode && (0.0f >= m_TrialModeTimer.RemainingTime()))
 			{
 				//is there already purchase screen in the stack?
-				foreach (GameScreen screen in Screens)
+				foreach (IScreen screen in Screens)
 				{
 					if (screen is PurchaseScreen)
 					{
@@ -185,8 +176,8 @@ namespace OuyaTimeTrialBuddy
 		/// <summary>
 		/// Sets the trial mode flag.
 		/// </summary>
-		/// <param name="IsTrialMode">If set to <c>true</c> is trial mode.</param>
-		public virtual void SetTrialMode(bool bIsTrialMode)
+		/// <param name="trialMode">If set to <c>true</c> is trial mode.</param>
+		public virtual void SetTrialMode(bool trialMode)
 		{
 			//no trial mode in windows
 			Guide.IsTrialMode = false;
